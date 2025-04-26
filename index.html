@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: black;
+      overflow-x: hidden;
+    }
+
+    .floating-pixels {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pixel {
+      width: 4px;
+      height: 4px;
+      position: absolute;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+
+    .titulo-site {
+      text-align: center;
+      font-size: 36px;
+      font-family: 'Orbitron', sans-serif;
+      color: cyan;
+      margin: 20px 0 0 0;
+      text-shadow: 0 0 10px cyan;
+      z-index: 2;
+      position: relative;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #0b0f0f;
+      border-radius: 15px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: #e7c500 /* Altere para a cor desejada */
+}
+
+    .card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px cyan;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card button {
+      background: none;
+      border: 2px solid cyan;
+      padding: 10px;
+      color: cyan;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .card button:hover {
+      background: cyan;
+      color: black;
+      box-shadow: 0 0 10px cyan;
+    }
+
+    .pedido {
+      text-align: center;
+      margin-top: 30px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pedido-total {
+      font-size: 20px;
+    }
+
+    .pedido button {
+      background: none;
+      border: 2px solid cyan;
+      padding: 10px 20px;
+      color: cyan;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+      margin: 5px;
+    }
+
+    .pedido button:hover {
+      background: cyan;
+      color: black;
+      box-shadow: 0 0 15px cyan;
+    }
+
+    .redes-sociais {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 15px;
+      z-index: 2;
+      font-size: 20px;
+    }
+
+    .redes-sociais a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .relogio {
+      font-family: 'Orbitron', sans-serif;
+      color: cyan;
+      font-size: 24px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+    }
+
+    /* Estilo do botão flutuante do WhatsApp */
+    .whatsapp-float {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25d366;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 35px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+      z-index: 100;
+      transition: background-color 0.3s, transform 0.3s;
+      line-height: 60px;
+    }
+
+    .whatsapp-float:hover {
+      background-color: #20b358;
+      transform: scale(1.1);
+    }
+
+    /* Efeito de pulsação no botão */
+    @keyframes pulsar {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(0,0,0,0.3);
+      }
+      50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 15px rgba(0,255,0,0.7);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(0,0,0,0.3);
+      }
+    }
+
+    .whatsapp-float {
+      animation: pulsar 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3" preload="auto"></audio>
+
+  <div class="floating-pixels" id="pixels"></div>
+  <div class="relogio" id="relogio"></div>
+
+  <div class="redes-sociais">
+    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+    <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+  </div>
+
+  <div class="titulo-site">Neon Lanches</div>
+
+  <div class="container" id="cardContainer">
+    <!-- Seus cards de lanche aqui -->
+    <div class="card" data-preco="20">
+      <img src="https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg" alt="Lanche 1">
+      <h3>Neon Burgue</h3>
+      <button onclick="selecionarLanche('Lanche 1', 20)">Adicionar</button>
+    </div>
+    <div class="card" data-preco="19">
+      <img src="https://images.pexels.com/photos/2232/vegetables-italian-pizza-restaurant.jpg" alt="Lanche 5">
+      <h3>Pizza Neon</h3>
+      <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+    </div>
+    <div class="card" data-preco="25">
+      <img src="https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg" alt="Lanche 2">
+      <h3>Combo Neon Burgue</h3>
+      <button onclick="selecionarLanche('Lanche 2', 25)">Adicionar</button>
+    </div>
+
+    <!-- Continue os outros cards -->
+    <div class="card" data-preco="18">
+        <img src="https://tse1.mm.bing.net/th?id=OIP.R9V9Usckd3MMIhHbt1VZ0AHaE8&pid=Api&P=0&h=180" alt="Lanche 3">
+        <h3>Dog Neon</h3>
+        <button onclick="selecionarLanche('Lanche 3', 18)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="22">
+        <img src="https://images.pexels.com/photos/750073/pexels-photo-750073.jpeg" alt="Lanche 4">
+        <h3>Combo Neon Artesanal </h3>
+        <button onclick="selecionarLanche('Lanche 4', 22)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="19">
+        <img src="https://tse2.mm.bing.net/th?id=OIP.RpgEFsWCg0lAJwYjntIQ_AAAAA&pid=Api&P=0&h=180" alt="Lanche 5">
+        <h3>Fritas</h3>
+        <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="19">
+        <img src="https://tse2.mm.bing.net/th?id=OIP.5h3_KWHTCuHj6qrj3bI2mgHaEw&pid=Api&P=0&h=180" alt="Lanche 5">
+        <h3>Sucos da Fruta</h3>
+        <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="19">
+        <img src="https://tse4.mm.bing.net/th?id=OIP.rjxR1DpcfNAuEgUo8x59pwHaHa&pid=Api&P=0&h=180" alt="Lanche 5">
+        <h3>Neon Monster Burgue</h3>
+        <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="23">
+        <img src="https://tse4.mm.bing.net/th?id=OIP.Cis6CqwlY4FJG99grO9IBgHaFS&pid=Api&P=0&h=180" alt="Lanche 6">
+        <h3>Torteletes</h3>
+        <button onclick="selecionarLanche('Lanche 6', 23)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="19">
+        <img src="https://tse4.mm.bing.net/th?id=OIP.Ej2m_VI6_1bBsgikO78glwHaFj&pid=Api&P=0&h=180" alt="Lanche 5">
+        <h3>Grilled Cheese Neon</h3>
+        <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="19">
+        <img src="https://tse2.mm.bing.net/th?id=OIP.edZo1c3Xad-xhZoUkU1VyQHaEo&pid=Api&P=0&h=180" alt="Lanche 5">
+        <h3> Açai</h3>
+        <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+      </div>
+      <div class="card" data-preco="19">
+        <img src="https://tse4.mm.bing.net/th?id=OIP.jZ4Y5SyTgXsH0oGwFr-ySQHaE8&pid=Api&P=0&h=180" alt="Lanche 5">
+        <h3>Refrigerantes</h3>
+        <button onclick="selecionarLanche('Lanche 5', 19)">Adicionar</button>
+      </div>
+  </div>
+
+  <div class="pedido" id="pedido"></div>
+
+  <!-- Campo de Localização -->
+  <div id="localizacao" style="text-align: center; color: white; margin-top: 20px;">
+    <input type="text" id="localizacaoInput" placeholder="Digite sua localização..." style="padding: 10px; width: 80%; background: #222; color: white; border: 1px solid cyan; border-radius: 5px;">
+  </div>
+
+  <!-- Botão Flutuante WhatsApp -->
+  <a href="https://wa.me/5521992081641" 
+     class="whatsapp-float" 
+     target="_blank">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Rodapé -->
+  <footer style="text-align: center; padding: 20px; color: cyan; background-color: #000; font-family: 'Orbitron', sans-serif; box-shadow: 0 -2px 10px cyan; margin-top: 50px;">
+    © 2025 Neon Lanches. Todos os direitos reservados.
+  </footer>
+
+  <script>
+    let pedidos = [];
+
+    function selecionarLanche(nome, preco) {
+      document.getElementById('clickSound').play();
+      const id = Date.now() + Math.random();
+      pedidos.push({ id, nome, preco, observacao: "" });
+      atualizarPedido();
+    }
+
+    function atualizarPedido() {
+      const total = pedidos.reduce((acc, p) => acc + p.preco, 0);
+
+      const detalhes = pedidos.map(p => `
+        <div style="margin-bottom: 20px; border: 1px solid cyan; padding: 10px; border-radius: 10px;">
+          <strong>${p.nome}</strong> - R$${p.preco.toFixed(2)}<br>
+          <textarea placeholder="Observação para este lanche" 
+                    onchange="atualizarObservacao(${p.id}, this.value)" 
+                    style="width: 90%; margin-top: 5px; border-radius: 6px; background: #000; border: 1px solid cyan; color: cyan; padding: 6px;"></textarea>
+        </div>
+      `).join('');
+
+      document.getElementById('pedido').innerHTML = `
+        <div>${detalhes}</div>
+        <div style="color:white; margin-top: 10px;" class="pedido-total"><strong>Total: R$${total.toFixed(2)}</strong></div>
+        <div style="margin-top: 15px;">
+          <button onclick="voltarCompras()">Voltar às Compras</button>
+          <button onclick="enviarPedido()">Enviar Pedido</button>
+          <button onclick="limparPedido()">Limpar Tudo</button>
+        </div>
+      `;
+    }
+
+    function voltarCompras() {
+      document.getElementById('pedido').innerHTML = '';
+    }
+
+    function atualizarObservacao(id, texto) {
+      const pedido = pedidos.find(p => p.id === id);
+      if (pedido) {
+        pedido.observacao = texto;
+      }
+    }
+
+    function enviarPedido() {
+      const localizacao = document.getElementById('localizacaoInput').value;
+      if (pedidos.length === 0 || !localizacao) {
+        alert("Por favor, preencha a localização e adicione itens ao pedido!");
+        return;
+      }
+
+      const nomeCliente = prompt("Digite seu nome:");
+      if (!nomeCliente) return;
+
+      const formaPagamento = prompt("Forma de pagamento (Dinheiro, Cartão, Pix, etc.):");
+      if (!formaPagamento) return;
+
+      let mensagem = `Pedido de ${nomeCliente}\nLocalização: ${localizacao}\nForma de pagamento: ${formaPagamento}\n`;
+
+      pedidos.forEach(p => {
+        mensagem += `\n- ${p.nome} (R$${p.preco.toFixed(2)})`;
+        if (p.observacao) {
+          mensagem += `\n  Obs: ${p.observacao}`;
+        }
+      });
+
+      const total = pedidos.reduce((acc, p) => acc + p.preco, 0);
+      mensagem += `\n\nTotal: R$${total.toFixed(2)}`;
+
+      const numeroVendedor = '5521992081641';
+      window.open(`https://wa.me/${numeroVendedor}?text=${encodeURIComponent(mensagem)}`);
+    }
+
+    function limparPedido() {
+      pedidos = [];
+      document.getElementById('pedido').innerHTML = '';
+    }
+
+    function atualizarRelogio() {
+      const agora = new Date();
+      const horas = agora.getHours().toString().padStart(2, '0');
+      const minutos = agora.getMinutes().toString().padStart(2, '0');
+      const segundos = agora.getSeconds().toString().padStart(2, '0');
+      document.getElementById('relogio').textContent = `${horas}:${minutos}:${segundos}`;
+    }
+
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
+  </script>
+</body>
+</html>
